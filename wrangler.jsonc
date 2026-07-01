@@ -1,0 +1,26 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "vibe-coding-lovable",
+  "main": "./dist/_worker.js/index.js",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "binding": "ASSETS",
+    "directory": "./dist"
+  },
+  "observability": {
+    "enabled": true
+  },
+  // Email signups database.
+  // 1. Create it:            npm run db:create
+  // 2. Paste the database_id printed by that command below.
+  // 3. Apply the migration:  npm run db:migrate
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "vibe-coding-signups",
+      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

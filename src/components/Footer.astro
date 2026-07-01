@@ -1,0 +1,143 @@
+---
+import LogoMark from './LogoMark.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="inner">
+    <div class="cols">
+      <div>
+        <div class="brand-row">
+          <LogoMark size={36} radius={11} />
+          <span class="brand-name">Vibe Coding с Lovable</span>
+        </div>
+        <p class="about">
+          Практичен курс за създаване на приложения чрез вайб коудинг с Lovable. Воден от
+          Радослав Додников.
+        </p>
+      </div>
+      <div>
+        <div class="col-title">Навигация</div>
+        <div class="links">
+          <a href="/#kurs">Курсът</a>
+          <a href="/#lektor">Лектор</a>
+          <a href="/#skoro">Скоро</a>
+          <a href="/#faq">Въпроси</a>
+        </div>
+      </div>
+      <div>
+        <div class="col-title">Правно</div>
+        <div class="links">
+          <a href="/usloviya">Общи условия</a>
+          <a href="/poveritelnost">Поверителност</a>
+          <a href="/biskvitki">Бисквитки</a>
+          <a href="mailto:radoslav.dodnikov@gmail.com">radoslav.dodnikov@gmail.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="bottom">
+      <div class="copy">© {year} Радослав Додников. Всички права запазени.</div>
+      <div class="disclaimer">
+        Не сме свързани с Lovable. „Lovable“ и логото на Lovable са търговски марки на
+        съответните им собственици и се използват тук единствено с описателна цел.
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--ink);
+    color: #fff;
+    padding: 64px 24px 40px;
+  }
+
+  .inner {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .cols {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: 40px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .brand-row {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin-bottom: 16px;
+  }
+
+  .brand-name {
+    font-weight: 700;
+    font-size: 17px;
+  }
+
+  .about {
+    color: #8f897c;
+    font-size: 14.5px;
+    line-height: 1.6;
+    max-width: 340px;
+    margin: 0;
+  }
+
+  .col-title {
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 14px;
+    color: var(--muted-dark);
+  }
+
+  .links {
+    display: grid;
+    gap: 9px;
+  }
+
+  .links a {
+    color: #8f897c;
+    text-decoration: none;
+    font-size: 14.5px;
+    transition: color 0.15s;
+  }
+
+  .links a:hover {
+    color: #fff;
+  }
+
+  .bottom {
+    padding-top: 22px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .copy {
+    color: #6b6559;
+    font-size: 13px;
+  }
+
+  .disclaimer {
+    color: #6b6559;
+    font-size: 12.5px;
+    max-width: 560px;
+    text-align: right;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 760px) {
+    .cols {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+    .disclaimer {
+      text-align: left;
+    }
+  }
+</style>
