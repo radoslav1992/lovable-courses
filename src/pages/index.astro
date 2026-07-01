@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SignupForm from '../components/SignupForm.astro';
+import StickyCta from '../components/StickyCta.astro';
 
 const nextSessionDate = 'Обяви се скоро — дата получаваш на имейл';
 
@@ -28,6 +29,17 @@ const faqs = [
     a: 'Не. Този курс е напълно независим и не е официално свързан, спонсориран или одобрен от Lovable. „Lovable“ е търговска марка на съответния собственик и се споменава тук само защото курсът учи как да се работи с инструмента.',
   },
 ];
+
+// FAQ rich results in Google search.
+const faqJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+});
 ---
 
 <Base
@@ -35,6 +47,8 @@ const faqs = [
   description="Научи как да превръщаш идеи в работещи приложения без опит в програмиране. Безплатен 1-часов уебинар на живо с Радослав Додников — топ 10% Lovable потребител."
   path="/"
 >
+  <script type="application/ld+json" set:html={faqJsonLd} />
+
   <div class="page">
     <Header />
 
@@ -291,6 +305,9 @@ const faqs = [
             <p>Домейн, дизайн, маркетинг и първите ти реални потребители.</p>
           </div>
         </div>
+        <div class="soon-cta">
+          <a href="#zapis" class="btn-light">Запиши се и научи първи →</a>
+        </div>
       </div>
     </section>
 
@@ -333,9 +350,23 @@ const faqs = [
       </div>
     </section>
 
+    <StickyCta />
     <Footer />
   </div>
 </Base>
+
+<script>
+  // Every "sign up" link lands the visitor in the email field, not just near it.
+  document.querySelectorAll('a[href="#zapis"], a[href="/#zapis"]').forEach((link) => {
+    link.addEventListener('click', () => {
+      const input = document.getElementById('email-hero') as HTMLInputElement | null;
+      if (input && !input.closest('form')?.hidden) {
+        // Wait for the smooth scroll to arrive before focusing.
+        setTimeout(() => input.focus({ preventScroll: true }), 450);
+      }
+    });
+  });
+</script>
 
 <style>
   .page {
@@ -1003,6 +1034,10 @@ const faqs = [
     font-size: 15px;
     line-height: 1.55;
     margin: 0;
+  }
+
+  .soon-cta {
+    margin-top: 32px;
   }
 
   /* ============ FAQ ============ */

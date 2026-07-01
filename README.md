@@ -52,7 +52,7 @@ npm run preview            # wrangler dev against ./dist
 
 ```sh
 npx wrangler d1 execute vibe-coding-signups --remote \
-  --command "SELECT email, source, created_at FROM signups ORDER BY created_at DESC"
+  --command "SELECT email, source, utm_source, utm_campaign, referrer, created_at FROM signups ORDER BY created_at DESC"
 ```
 
 Or export as CSV:
@@ -87,3 +87,4 @@ migrations/
 - The API lower-cases emails and ignores duplicates (`ON CONFLICT DO NOTHING`), so re-subscribing always looks successful to the visitor.
 - A hidden honeypot field silently drops most bots.
 - Successful signup is remembered in `localStorage`, so returning visitors see the "you're in" state instead of the form.
+- UTM parameters (`utm_source`, `utm_medium`, `utm_campaign`) and the external referrer are captured on landing and stored with each signup, so you can see which channel converts (`source` column additionally tells you which form on the page: hero, final CTA — the sticky mobile bar scrolls to the hero form).

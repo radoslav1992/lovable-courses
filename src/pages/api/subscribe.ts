@@ -10,8 +10,20 @@ const json = (body: Record<string, unknown>, status = 200) =>
     headers: { 'Content-Type': 'application/json' },
   });
 
+/** Trim attribution values to something sane; empty → null. */
+const attr = (v: unknown): string | null =>
+  typeof v === 'string' && v.trim() ? v.trim().slice(0, 200) : null;
+
 export const POST: APIRoute = async ({ request, locals }) => {
-  let payload: { email?: string; source?: string; website?: string };
+  let payload: {
+    email?: string;
+    source?: string;
+    website?: string;
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    referrer?: string;
+  };
   try {
     payload = await request.json();
   } catch {
@@ -42,9 +54,18 @@ export const POST: APIRoute = async ({ request, locals }) => {
     await db
       .prepare(
         // Re-signing up with the same email is fine — keep the first record.
-        'INSERT INTO signups (email, course, source) VALUES (?1, ?2, ?3) ON CONFLICT(email) DO NOTHING'
+        `INSERT INTO signups (email, course, source, utm_source, utm_medium, utm_campaign, referrer)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7) ON CONFLICT(email) DO NOTHING`
       )
-      .bind(email, 'vibe-coding-lovable', source)
+      .bind(
+        email,
+        'vibe-coding-lovable',
+        source,
+        attr(payload.utm_source),
+        attr(payload.utm_medium),
+        attr(payload.utm_campaign),
+        attr(payload.referrer)
+      )
       .run();
     return json({ ok: true });
   } catch (err) {

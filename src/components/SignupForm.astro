@@ -27,6 +27,7 @@ const { variant, source } = Astro.props;
         name="email"
         type="email"
         inputmode="email"
+        enterkeyhint="go"
         autocomplete="email"
         placeholder="твоят@имейл.com"
         required
@@ -231,6 +232,34 @@ const { variant, source } = Astro.props;
 
 <script>
   const STORAGE_KEY = 'vc_subscribed';
+  const UTM_KEY = 'vc_utm';
+
+  // Capture UTM params on first landing and keep them for the whole visit,
+  // so attribution survives even if the visitor navigates around first.
+  function getAttribution(): Record<string, string> {
+    let stored: Record<string, string> = {};
+    try {
+      stored = JSON.parse(sessionStorage.getItem(UTM_KEY) || '{}');
+    } catch {
+      /* ignore */
+    }
+    const params = new URLSearchParams(location.search);
+    for (const k of ['utm_source', 'utm_medium', 'utm_campaign']) {
+      const v = params.get(k);
+      if (v && !stored[k]) stored[k] = v;
+    }
+    if (!stored.referrer && document.referrer && !document.referrer.startsWith(location.origin)) {
+      stored.referrer = document.referrer;
+    }
+    try {
+      sessionStorage.setItem(UTM_KEY, JSON.stringify(stored));
+    } catch {
+      /* ignore */
+    }
+    return stored;
+  }
+
+  const attribution = getAttribution();
 
   function showSuccess(root: Element) {
     root.querySelector('form')?.setAttribute('hidden', '');
@@ -244,6 +273,8 @@ const { variant, source } = Astro.props;
       /* private mode etc. */
     }
     document.querySelectorAll('[data-signup]').forEach(showSuccess);
+    // Lets other UI (e.g. the sticky mobile CTA) react to the signup.
+    document.dispatchEvent(new CustomEvent('vc:subscribed'));
   }
 
   // Returning visitor who already signed up: skip straight to the success state.
@@ -287,6 +318,7 @@ const { variant, source } = Astro.props;
             email,
             source: (form.elements.namedItem('source') as HTMLInputElement).value,
             website: (form.elements.namedItem('website') as HTMLInputElement).value,
+            ...attribution,
           }),
         });
         const data = (await res.json()) as { ok?: boolean; error?: string };
