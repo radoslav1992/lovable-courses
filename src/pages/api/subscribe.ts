@@ -5,15 +5,20 @@ export const prerender = false;
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
+/** Parse `Name <addr@domain>` (or a bare address) into an EmailAddress. */
+function parseSender(from: string): { name: string; email: string } {
+  const m = from.match(/^\s*(.*?)\s*<\s*(.+?)\s*>\s*$/);
+  return m ? { name: m[1], email: m[2] } : { name: '', email: from.trim() };
+}
+
 /**
- * Welcome email with the lead magnet, sent via Resend (https://resend.com).
- * Requires two Worker secrets/vars:
- *   npx wrangler secret put RESEND_API_KEY
- *   EMAIL_FROM in wrangler.jsonc vars, e.g. "Радослав <kurs@yourdomain.com>"
- * If either is missing the email is skipped silently — signups still work.
+ * Welcome email with the lead magnet, sent through the Cloudflare Email
+ * Sending binding (wrangler.jsonc → send_email). EMAIL_FROM must be an
+ * address on a domain onboarded in Email Sending; while it's empty the
+ * email is skipped silently — signups still work.
  */
 async function sendWelcomeEmail(env: Env, to: string, origin: string): Promise<void> {
-  if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return;
+  if (!env.EMAIL || !env.EMAIL_FROM) return;
 
   const bonusUrl = `${origin}${siteConfig.leadMagnetPath}`;
   const html = `
@@ -32,22 +37,14 @@ async function sendWelcomeEmail(env: Env, to: string, origin: string): Promise<v
       <p style="font-size:12px;color:#888">Получаваш този имейл, защото се записа на сайта на курса. Курсът е независим и не е свързан с Lovable. Ако не искаш повече съобщения, отговори с „отпиши ме“.</p>
     </div>`;
 
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${env.RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: env.EMAIL_FROM,
-      to,
-      subject: `Записан си! 🎁 Бонус: ${siteConfig.leadMagnetTitle}`,
-      html,
-    }),
+  const result = await env.EMAIL.send({
+    from: parseSender(env.EMAIL_FROM),
+    to,
+    subject: `Записан си! 🎁 Бонус: ${siteConfig.leadMagnetTitle}`,
+    html,
+    text: `Записан си за безплатния уебинар "Vibe Coding с Lovable". Бонусът те чака тук: ${bonusUrl}`,
   });
-  if (!res.ok) {
-    console.error('Resend send failed:', res.status, await res.text());
-  }
+  console.log('Welcome email sent:', result.messageId);
 }
 
 const json = (body: Record<string, unknown>, status = 200) =>

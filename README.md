@@ -50,22 +50,16 @@ npm run preview            # wrangler dev against ./dist
 
 5. **Web analytics** (optional, free, cookie-free): Cloudflare Dashboard → Analytics & Logs → Web Analytics → Add a site → copy the beacon token into `cfBeaconToken` in `src/config.ts` and redeploy. Nothing is injected while the token is empty.
 
-6. **Welcome email with the lead magnet** (optional): sign up at [resend.com](https://resend.com) (free tier: 3,000 emails/month), verify your domain, then:
+6. **Welcome email with the lead magnet** (optional): uses [Cloudflare Email Sending](https://developers.cloudflare.com/email-service/) (beta) natively — no API keys. In the dashboard (Email Service → Email Sending), onboard the domain you want to send from (you already have `siteintelica.com` / `whisperstt.com` configured), then set `EMAIL_FROM` in `wrangler.jsonc`, e.g. `"Радослав <kurs@siteintelica.com>"`, and redeploy. New signups then automatically receive the bonus email; duplicates don't re-trigger it. While `EMAIL_FROM` is empty, signups still work — the email step is just skipped.
 
-   ```sh
-   npx wrangler secret put RESEND_API_KEY
-   ```
-
-   and set `EMAIL_FROM` in `wrangler.jsonc` (e.g. `"Радослав <kurs@yourdomain.com>"`). New signups then automatically receive the bonus email; duplicates don't re-trigger it. While unset, signups still work — the email step is just skipped.
-
-   > Note: Cloudflare's own email sending (Email Workers) can only deliver to verified addresses in your account, so it can't email arbitrary subscribers — that's why an email API is used here.
+   In local dev the binding is simulated (emails are logged to the console, not delivered); set `"remote": true` on the `send_email` binding in `wrangler.jsonc` to send real emails from `wrangler dev`. Beta quota: 1,000 emails/day.
 
 ## Placeholders to replace before launch
 
 - `src/pages/index.astro` — the `testimonials` array is **mock social proof**; replace with real quotes (with permission) before going live.
 - `src/pages/bonus.astro` — placeholder prompts for the lead magnet «10 готови промпта за Lovable»; replace with your real prompts. The page is `noindex` and only reachable via the welcome email link.
 - `src/config.ts` — analytics token, next session date, lead magnet title.
-- `wrangler.jsonc` — D1 `database_id`, `EMAIL_FROM`.
+- `wrangler.jsonc` — D1 `database_id`, `EMAIL_FROM` (address on an Email Sending onboarded domain).
 
 ## Reading collected emails
 

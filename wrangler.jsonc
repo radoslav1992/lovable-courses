@@ -11,12 +11,21 @@
   "observability": {
     "enabled": true
   },
-  // Welcome email (optional). Set the sender here and the API key as a secret:
-  //   npx wrangler secret put RESEND_API_KEY
-  // Until both are set, signups work but no email is sent.
+  // Welcome email via Cloudflare Email Sending (beta).
+  // Set EMAIL_FROM to an address on a domain onboarded in
+  // Dashboard → Email Service → Email Sending, e.g. "Радослав <kurs@siteintelica.com>".
+  // While EMAIL_FROM is empty, signups work but no email is sent.
   "vars": {
     "EMAIL_FROM": ""
   },
+  "send_email": [
+    {
+      "name": "EMAIL",
+      // In local dev the binding is simulated (emails are logged, not sent).
+      // Flip to true to send real emails from `wrangler dev`.
+      "remote": false
+    }
+  ],
   // Email signups database.
   // 1. Create it:            npm run db:create
   // 2. Paste the database_id printed by that command below.
