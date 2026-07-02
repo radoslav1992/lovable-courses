@@ -48,6 +48,25 @@ npm run preview            # wrangler dev against ./dist
 
 4. Set the production domain in `astro.config.mjs` (`site`) so canonical/OG URLs are correct, then redeploy.
 
+5. **Web analytics** (optional, free, cookie-free): Cloudflare Dashboard → Analytics & Logs → Web Analytics → Add a site → copy the beacon token into `cfBeaconToken` in `src/config.ts` and redeploy. Nothing is injected while the token is empty.
+
+6. **Welcome email with the lead magnet** (optional): sign up at [resend.com](https://resend.com) (free tier: 3,000 emails/month), verify your domain, then:
+
+   ```sh
+   npx wrangler secret put RESEND_API_KEY
+   ```
+
+   and set `EMAIL_FROM` in `wrangler.jsonc` (e.g. `"Радослав <kurs@yourdomain.com>"`). New signups then automatically receive the bonus email; duplicates don't re-trigger it. While unset, signups still work — the email step is just skipped.
+
+   > Note: Cloudflare's own email sending (Email Workers) can only deliver to verified addresses in your account, so it can't email arbitrary subscribers — that's why an email API is used here.
+
+## Placeholders to replace before launch
+
+- `src/pages/index.astro` — the `testimonials` array is **mock social proof**; replace with real quotes (with permission) before going live.
+- `src/pages/bonus.astro` — placeholder prompts for the lead magnet «10 готови промпта за Lovable»; replace with your real prompts. The page is `noindex` and only reachable via the welcome email link.
+- `src/config.ts` — analytics token, next session date, lead magnet title.
+- `wrangler.jsonc` — D1 `database_id`, `EMAIL_FROM`.
+
 ## Reading collected emails
 
 ```sh

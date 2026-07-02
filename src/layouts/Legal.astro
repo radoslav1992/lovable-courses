@@ -6,13 +6,28 @@ interface Props {
   title: string;
   description: string;
   path: string;
-  updated?: string;
+  /** Set to null to hide the "last updated" line (non-legal pages). */
+  updated?: string | null;
+  kicker?: string;
+  noindex?: boolean;
 }
 
-const { title, description, path, updated = '1 юли 2026 г.' } = Astro.props;
+const {
+  title,
+  description,
+  path,
+  updated = '1 юли 2026 г.',
+  kicker = 'Правно',
+  noindex = false,
+} = Astro.props;
 ---
 
-<Base title={`${title} — Vibe Coding с Lovable`} description={description} path={path}>
+<Base
+  title={`${title} — Vibe Coding с Lovable`}
+  description={description}
+  path={path}
+  noindex={noindex}
+>
   <div class="page">
     <header>
       <div class="inner">
@@ -25,9 +40,9 @@ const { title, description, path, updated = '1 юли 2026 г.' } = Astro.props;
     </header>
 
     <main>
-      <div class="kicker">Правно</div>
+      <div class="kicker">{kicker}</div>
       <h1>{title}</h1>
-      <p class="updated">Последна актуализация: {updated}</p>
+      {updated && <p class="updated">Последна актуализация: {updated}</p>}
       <div class="content">
         <slot />
       </div>

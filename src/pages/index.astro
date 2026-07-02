@@ -4,8 +4,35 @@ import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SignupForm from '../components/SignupForm.astro';
 import StickyCta from '../components/StickyCta.astro';
+import { siteConfig } from '../config';
 
-const nextSessionDate = 'Обяви се скоро — дата получаваш на имейл';
+const nextSessionDate = siteConfig.nextSessionDate;
+
+// TODO(radoslav): PLACEHOLDER testimonials — replace with real quotes
+// (and get permission from the people quoted) before launch.
+const testimonials = [
+  {
+    quote:
+      'Мислех, че „да си направя приложение“ е за програмисти. Час по-късно имах работещ прототип, който показах на клиент още същата вечер.',
+    name: 'Име Фамилия',
+    role: 'Маркетинг специалист',
+    initials: 'ИФ',
+  },
+  {
+    quote:
+      'Най-полезното беше да гледам как Радо мисли, докато строи. Промптовете, които показа, ги ползвам всеки ден.',
+    name: 'Име Фамилия',
+    role: 'Основател на малък бизнес',
+    initials: 'ИФ',
+  },
+  {
+    quote:
+      'Без нито един ред код си направих вътрешен инструмент, за който агенция ми искаше няколко хиляди лева.',
+    name: 'Име Фамилия',
+    role: 'Консултант',
+    initials: 'ИФ',
+  },
+];
 
 const faqs = [
   {
@@ -74,6 +101,10 @@ const faqJsonLd = JSON.stringify({
 
           <div id="zapis" class="hero-signup">
             <SignupForm variant="dark" source="hero" />
+            <p class="bonus-line">
+              🎁 Бонус при записване: <strong>{siteConfig.leadMagnetTitle}</strong> — веднага на
+              имейла ти.
+            </p>
             <p class="fine-print">
               Без спам. Отписваш се по всяко време. · <a href="#faq">Не сме свързани с Lovable</a>
             </p>
@@ -276,6 +307,34 @@ const faqJsonLd = JSON.stringify({
       </div>
     </section>
 
+    <!-- ============ ОТЗИВИ ============ -->
+    <section id="otzivi" class="otzivi">
+      <div class="container">
+        <div class="section-head centered">
+          <div class="kicker">Какво казват участниците</div>
+          <h2>Хора без опит в кода.<br />Реални резултати.</h2>
+        </div>
+        <div class="quotes">
+          {
+            testimonials.map((t) => (
+              <figure class="quote-card">
+                <blockquote>„{t.quote}“</blockquote>
+                <figcaption>
+                  <span class="avatar" aria-hidden="true">
+                    {t.initials}
+                  </span>
+                  <span>
+                    <span class="q-name">{t.name}</span>
+                    <span class="q-role">{t.role}</span>
+                  </span>
+                </figcaption>
+              </figure>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
     <!-- ============ СКОРО ============ -->
     <section id="skoro" class="soon">
       <div class="glow glow-soon" aria-hidden="true"></div>
@@ -342,6 +401,9 @@ const faqJsonLd = JSON.stringify({
           </p>
           <div class="final-form">
             <SignupForm variant="light" source="final-cta" />
+            <p class="final-bonus">
+              🎁 Бонус: <strong>{siteConfig.leadMagnetTitle}</strong> — веднага след записване.
+            </p>
             <p class="final-fine">
               Този курс е независим и не е официално свързан, спонсориран или одобрен от Lovable.
             </p>
@@ -508,8 +570,18 @@ const faqJsonLd = JSON.stringify({
     max-width: 500px;
   }
 
-  .fine-print {
+  .bonus-line {
     margin: 14px 2px 0;
+    color: #f4e9e0;
+    font-size: 14px;
+  }
+
+  .bonus-line strong {
+    color: #fff;
+  }
+
+  .fine-print {
+    margin: 8px 2px 0;
     color: #8f897c;
     font-size: 13px;
   }
@@ -951,6 +1023,81 @@ const faqJsonLd = JSON.stringify({
     border-color: var(--ink);
   }
 
+  /* ============ ОТЗИВИ ============ */
+  .otzivi {
+    padding: clamp(72px, 9vw, 128px) 24px;
+    background: #fff;
+    border-top: 1px solid rgba(23, 21, 15, 0.06);
+  }
+
+  .otzivi h2 {
+    color: var(--ink);
+  }
+
+  .section-head.centered {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .quote-card {
+    margin: 0;
+    background: var(--paper);
+    border: 1px solid rgba(23, 21, 15, 0.09);
+    border-radius: 22px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .quote-card blockquote {
+    margin: 0;
+    color: #3a362e;
+    font-size: 16.5px;
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .quote-card figcaption {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .avatar {
+    flex: none;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: var(--grad-full);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .q-name {
+    display: block;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .q-role {
+    display: block;
+    font-size: 13.5px;
+    color: #8b8678;
+  }
+
   /* ============ СКОРО ============ */
   .soon {
     padding: clamp(72px, 9vw, 120px) 24px;
@@ -1161,8 +1308,15 @@ const faqJsonLd = JSON.stringify({
     margin: 0 auto;
   }
 
-  .final-fine {
+  .final-bonus {
     margin: 16px 0 0 !important;
+    color: #fff !important;
+    font-size: 14.5px !important;
+    max-width: none !important;
+  }
+
+  .final-fine {
+    margin: 10px 0 0 !important;
     color: rgba(255, 255, 255, 0.82) !important;
     font-size: 13px !important;
     max-width: none !important;
@@ -1195,7 +1349,8 @@ const faqJsonLd = JSON.stringify({
     }
 
     .cards,
-    .modules {
+    .modules,
+    .quotes {
       grid-template-columns: 1fr;
     }
 

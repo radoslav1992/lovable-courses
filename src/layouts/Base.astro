@@ -1,12 +1,16 @@
 ---
+import { siteConfig } from '../config';
+
 interface Props {
   title: string;
   description: string;
   /** Path of the current page, used for canonical + og:url */
   path?: string;
+  /** Keep the page out of search results (e.g. the bonus page). */
+  noindex?: boolean;
 }
 
-const { title, description, path = '/' } = Astro.props;
+const { title, description, path = '/', noindex = false } = Astro.props;
 const canonical = new URL(path, Astro.site);
 const ogImage = new URL('/og.jpg', Astro.site);
 ---
@@ -35,6 +39,17 @@ const ogImage = new URL('/og.jpg', Astro.site);
       href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800&display=swap"
       rel="stylesheet"
     />
+
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {
+      siteConfig.cfBeaconToken && (
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: siteConfig.cfBeaconToken })}
+        />
+      )
+    }
   </head>
   <body>
     <slot />
