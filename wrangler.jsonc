@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "vibe-coding-lovable",
+  // Matches the Cloudflare Workers Builds project name.
+  "name": "lovable-courses",
   "main": "./dist/_worker.js/index.js",
   "compatibility_date": "2026-06-01",
   "compatibility_flags": ["nodejs_compat"],
