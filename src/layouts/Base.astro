@@ -25,13 +25,26 @@ const ogImage = new URL('/og.jpg', Astro.site);
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
+    <meta name="theme-color" content="#17150F" />
+
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Vibe Coding с Lovable" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta
+      property="og:image:alt"
+      content="Вайб коудинг с Lovable — безплатен уебинар на живо, 1 час. Бонус: 10 готови промпта за Lovable."
+    />
     <meta property="og:locale" content="bg_BG" />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
