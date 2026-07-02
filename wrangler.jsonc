@@ -6,8 +6,12 @@
   "compatibility_flags": ["nodejs_compat"],
   "assets": {
     "binding": "ASSETS",
-    "directory": "./dist"
+    "directory": "./dist",
+    "not_found_handling": "404-page"
   },
+  // Optional secrets (set with `npx wrangler secret put <NAME>`):
+  //   TURNSTILE_SECRET_KEY — pairs with turnstileSiteKey in src/config.ts;
+  //   bot verification is skipped while unset.
   "observability": {
     "enabled": true
   },

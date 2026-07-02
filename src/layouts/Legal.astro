@@ -10,6 +10,7 @@ interface Props {
   updated?: string | null;
   kicker?: string;
   noindex?: boolean;
+  conversionEvent?: string;
 }
 
 const {
@@ -19,6 +20,7 @@ const {
   updated = '1 юли 2026 г.',
   kicker = 'Правно',
   noindex = false,
+  conversionEvent,
 } = Astro.props;
 ---
 
@@ -27,6 +29,7 @@ const {
   description={description}
   path={path}
   noindex={noindex}
+  conversionEvent={conversionEvent}
 >
   <div class="page">
     <header>

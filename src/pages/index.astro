@@ -57,15 +57,55 @@ const faqs = [
   },
 ];
 
-// FAQ rich results in Google search.
-const faqJsonLd = JSON.stringify({
+// Structured data: FAQ rich results + entities (site, course, lecturer)
+// that search and answer engines can attribute correctly.
+const jsonLd = JSON.stringify({
   '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: faqs.map((f) => ({
-    '@type': 'Question',
-    name: f.q,
-    acceptedAnswer: { '@type': 'Answer', text: f.a },
-  })),
+  '@graph': [
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    },
+    {
+      '@type': 'WebSite',
+      '@id': new URL('/#website', Astro.site).href,
+      url: Astro.site?.href,
+      name: 'Vibe Coding с Lovable',
+      inLanguage: 'bg',
+    },
+    {
+      '@type': 'Person',
+      '@id': new URL('/#lektor', Astro.site).href,
+      name: 'Радослав Додников',
+      url: Astro.site?.href,
+      sameAs: ['https://www.linkedin.com/in/radoslav-dodnikov'],
+      jobTitle: 'Лектор, Vibe Coding с Lovable',
+    },
+    {
+      '@type': 'Course',
+      name: 'Вайб коудинг с Lovable — безплатен уебинар',
+      description:
+        'Едночасов уебинар на живо на български: как да създаваш работещи уеб приложения без опит в програмирането, чрез вайб коудинг с Lovable. Независим курс, несвързан с Lovable.',
+      inLanguage: 'bg',
+      isAccessibleForFree: true,
+      provider: { '@id': new URL('/#lektor', Astro.site).href },
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'BGN',
+        availability: 'https://schema.org/InStock',
+      },
+      hasCourseInstance: {
+        '@type': 'CourseInstance',
+        courseMode: 'Online',
+        courseWorkload: 'PT1H',
+      },
+    },
+  ],
 });
 ---
 
@@ -74,7 +114,7 @@ const faqJsonLd = JSON.stringify({
   description="Научи как да превръщаш идеи в работещи приложения без опит в програмиране. Безплатен 1-часов уебинар на живо с Радослав Додников — топ 10% Lovable потребител."
   path="/"
 >
-  <script type="application/ld+json" set:html={faqJsonLd} />
+  <script type="application/ld+json" set:html={jsonLd} />
 
   <div class="page">
     <Header />

@@ -1,0 +1,206 @@
+---
+/**
+ * Cookie consent banner + tracking loader. Rendered only when a Facebook
+ * Pixel ID or Google tag ID is configured in src/config.ts.
+ *
+ * Hard consent gating: no tracking script is loaded until the visitor
+ * accepts. On accept, the pixels load and any pending conversion event
+ * (declared via <body data-conversion="...">) is fired. The choice is
+ * stored in localStorage; the footer can reopen the banner by dispatching
+ * a "vc:consent-open" event.
+ */
+import { siteConfig } from '../config';
+
+const trackingConfig = {
+  fbPixelId: siteConfig.fbPixelId,
+  googleTagId: siteConfig.googleTagId,
+  googleAdsConversionLabel: siteConfig.googleAdsConversionLabel,
+};
+---
+
+<div class="consent" data-consent-banner hidden>
+  <div class="consent-card" role="dialog" aria-live="polite" aria-label="Съгласие за бисквитки">
+    <p>
+      Използваме бисквитки за измерване на рекламата — само ако се съгласиш. Виж
+      <a href="/biskvitki">политиката за бисквитки</a>.
+    </p>
+    <div class="consent-actions">
+      <button type="button" data-consent-accept>Приемам</button>
+      <button type="button" data-consent-decline class="secondary">Отказвам</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .consent {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 80;
+    padding: 14px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .consent[hidden] {
+    display: none;
+  }
+
+  .consent-card {
+    max-width: 640px;
+    width: 100%;
+    background: var(--ink);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .consent-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted-dark);
+    flex: 1;
+    min-width: 240px;
+  }
+
+  .consent-card a {
+    color: #fff;
+  }
+
+  .consent-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .consent-actions button {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 10px 18px;
+    border-radius: 10px;
+    background: var(--grad);
+    color: #fff;
+  }
+
+  .consent-actions button.secondary {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    color: var(--muted-dark);
+    font-weight: 600;
+  }
+</style>
+
+<script is:inline define:vars={{ trackingConfig }}>
+  (() => {
+    const KEY = 'vc_consent';
+    const banner = document.querySelector('[data-consent-banner]');
+    if (!banner) return;
+
+    let loaded = false;
+
+    function fireConversion() {
+      const event = document.body.dataset.conversion;
+      if (!event || event !== 'lead') return;
+      if (window.fbq) window.fbq('track', 'Lead');
+      if (window.gtag) {
+        window.gtag('event', 'generate_lead');
+        if (trackingConfig.googleTagId && trackingConfig.googleAdsConversionLabel) {
+          window.gtag('event', 'conversion', {
+            send_to: `${trackingConfig.googleTagId}/${trackingConfig.googleAdsConversionLabel}`,
+          });
+        }
+      }
+    }
+
+    function loadTracking() {
+      if (loaded) return;
+      loaded = true;
+
+      if (trackingConfig.googleTagId) {
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () {
+          window.dataLayer.push(arguments);
+        };
+        window.gtag('consent', 'default', {
+          ad_storage: 'granted',
+          ad_user_data: 'granted',
+          ad_personalization: 'granted',
+          analytics_storage: 'granted',
+        });
+        window.gtag('js', new Date());
+        window.gtag('config', trackingConfig.googleTagId);
+        const gs = document.createElement('script');
+        gs.async = true;
+        gs.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(trackingConfig.googleTagId)}`;
+        document.head.appendChild(gs);
+      }
+
+      if (trackingConfig.fbPixelId) {
+        /* Meta Pixel bootstrap */
+        !(function (f, b, e, v, n, t, s) {
+          if (f.fbq) return;
+          n = f.fbq = function () {
+            n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+          };
+          if (!f._fbq) f._fbq = n;
+          n.push = n;
+          n.loaded = !0;
+          n.version = '2.0';
+          n.queue = [];
+          t = b.createElement(e);
+          t.async = !0;
+          t.src = v;
+          s = b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t, s);
+        })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+        window.fbq('init', trackingConfig.fbPixelId);
+        window.fbq('track', 'PageView');
+      }
+
+      // Both gtag() and fbq() queue events until their scripts load, so the
+      // conversion can be pushed immediately — no dependence on script onload
+      // (which an ad blocker would prevent from ever firing).
+      fireConversion();
+    }
+
+    function choose(value) {
+      try {
+        localStorage.setItem(KEY, value);
+      } catch {
+        /* ignore */
+      }
+      banner.hidden = true;
+      if (value === 'granted') loadTracking();
+    }
+
+    banner.querySelector('[data-consent-accept]').addEventListener('click', () => choose('granted'));
+    banner.querySelector('[data-consent-decline]').addEventListener('click', () => choose('denied'));
+
+    document.addEventListener('vc:consent-open', () => {
+      banner.hidden = false;
+    });
+
+    let stored = null;
+    try {
+      stored = localStorage.getItem(KEY);
+    } catch {
+      /* ignore */
+    }
+
+    if (stored === 'granted') {
+      loadTracking();
+    } else if (stored !== 'denied') {
+      banner.hidden = false;
+    }
+  })();
+</script>
