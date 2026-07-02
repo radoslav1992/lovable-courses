@@ -1,0 +1,86 @@
+---
+import Base from '../layouts/Base.astro';
+import LogoMark from '../components/LogoMark.astro';
+---
+
+<Base
+  title="Страницата не е намерена — Vibe Coding с Lovable"
+  description="Страницата, която търсиш, не съществува."
+  path="/404"
+  noindex
+>
+  <div class="wrap">
+    <a href="/" class="brand">
+      <LogoMark size={44} radius={13} />
+    </a>
+    <div class="code">404</div>
+    <h1>Тази страница не съществува</h1>
+    <p>Но безплатният уебинар съществува — и те чака.</p>
+    <a href="/#zapis" class="cta">Запиши се безплатно</a>
+    <a href="/" class="home">← Обратно към началото</a>
+  </div>
+</Base>
+
+<style>
+  .wrap {
+    min-height: 100vh;
+    background: var(--ink);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    gap: 8px;
+  }
+
+  .brand {
+    margin-bottom: 18px;
+  }
+
+  .code {
+    font-size: clamp(72px, 14vw, 140px);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    background: var(--grad-full);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  h1 {
+    font-size: clamp(22px, 3.4vw, 32px);
+    letter-spacing: -0.02em;
+    margin: 10px 0 0;
+  }
+
+  p {
+    color: var(--muted-dark);
+    font-size: 17px;
+    margin: 6px 0 26px;
+  }
+
+  .cta {
+    text-decoration: none;
+    background: var(--grad);
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 15px 28px;
+    border-radius: 13px;
+    box-shadow: 0 10px 26px rgba(255, 78, 142, 0.4);
+  }
+
+  .home {
+    color: var(--muted-dark);
+    text-decoration: none;
+    font-size: 14.5px;
+    margin-top: 14px;
+  }
+
+  .home:hover {
+    color: #fff;
+  }
+</style>

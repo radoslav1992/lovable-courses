@@ -56,6 +56,11 @@ const prompts = [
   updated={null}
   noindex
 >
+  <p class="confirmed-note" data-confirmed-note hidden>
+    ✅ <strong>Имейлът ти е потвърден!</strong> Мястото ти за уебинара е запазено — датата и
+    линкът пристигат на имейла. А това долу е бонусът.
+  </p>
+
   <p>
     Това са промптове, които използвам постоянно. Копирай ги директно в Lovable, замени частите
     в <strong>[скоби]</strong> с твоя контекст и надграждай с последващи съобщения.
@@ -77,7 +82,21 @@ const prompts = [
   </div>
 </Legal>
 
+<script>
+  // Arriving from the confirmation email link (?potvurdeno=1).
+  if (new URLSearchParams(location.search).has('potvurdeno')) {
+    document.querySelector('[data-confirmed-note]')?.removeAttribute('hidden');
+  }
+</script>
+
 <style>
+  .confirmed-note {
+    background: rgba(75, 115, 255, 0.1);
+    border: 1px solid rgba(75, 115, 255, 0.35);
+    border-radius: 12px;
+    padding: 14px 18px;
+  }
+
   .prompt-box {
     background: #fff;
     border: 1px solid rgba(23, 21, 15, 0.1);

@@ -9,6 +9,32 @@ export const siteConfig = {
    */
   cfBeaconToken: '',
 
+  /**
+   * Facebook (Meta) Pixel ID. Loaded only after cookie consent.
+   * Leave empty to disable.
+   */
+  fbPixelId: '',
+
+  /**
+   * Google tag ID for Google Ads, e.g. "AW-123456789".
+   * Loaded only after cookie consent. Leave empty to disable.
+   */
+  googleTagId: '',
+
+  /**
+   * Google Ads conversion label for the signup event (the part after the
+   * slash in "AW-123456789/AbCdEfGh"). Leave empty to send only the
+   * generic generate_lead event.
+   */
+  googleAdsConversionLabel: '',
+
+  /**
+   * Cloudflare Turnstile site key (Dashboard → Turnstile → Add widget).
+   * Leave empty to disable the widget. When set, also set the Worker secret:
+   *   npx wrangler secret put TURNSTILE_SECRET_KEY
+   */
+  turnstileSiteKey: '',
+
   /** Shown in the FAQ answer about the next session. */
   nextSessionDate: 'Обяви се скоро — дата получаваш на имейл',
 

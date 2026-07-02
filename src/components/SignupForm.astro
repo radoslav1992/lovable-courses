@@ -6,11 +6,14 @@
  * variant "dark"  — on the dark hero background (gradient button)
  * variant "light" — on the gradient CTA panel (white button)
  */
+import { siteConfig } from '../config';
+
 interface Props {
   variant: 'dark' | 'light';
   source: string;
 }
 const { variant, source } = Astro.props;
+const turnstileEnabled = Boolean(siteConfig.turnstileSiteKey);
 ---
 
 <div class={`signup ${variant}`} data-signup>
@@ -39,6 +42,7 @@ const { variant, source } = Astro.props;
         <span class="btn-busy" hidden>Записваме те…</span>
       </button>
     </div>
+    {turnstileEnabled && <div class="ts-slot" data-turnstile-slot></div>}
     <p class="err" data-signup-error hidden></p>
   </form>
 
@@ -56,7 +60,7 @@ const { variant, source } = Astro.props;
     </span>
     <div>
       <div class="success-title">Готово! Записан си. 🎉</div>
-      <div class="success-sub">Провери имейла си — бонусът и детайлите пътуват към теб.</div>
+      <div class="success-sub">Провери имейла си и потвърди адреса, за да получиш бонуса.</div>
     </div>
   </div>
 </div>
@@ -118,6 +122,14 @@ const { variant, source } = Astro.props;
     margin: 11px 2px 0;
     font-size: 14px;
     font-weight: 500;
+  }
+
+  .ts-slot {
+    margin-top: 10px;
+  }
+
+  .ts-slot:empty {
+    display: none;
   }
 
   .success[hidden] {
@@ -233,8 +245,42 @@ const { variant, source } = Astro.props;
 </style>
 
 <script>
+  import { siteConfig } from '../config';
+
   const STORAGE_KEY = 'vc_subscribed';
   const UTM_KEY = 'vc_utm';
+  const TS_KEY = siteConfig.turnstileSiteKey;
+
+  declare global {
+    interface Window {
+      turnstile?: {
+        render: (el: Element, opts: Record<string, unknown>) => string;
+        getResponse: (id: string) => string | undefined;
+        reset: (id: string) => void;
+      };
+    }
+  }
+
+  // Turnstile: one widget per form, rendered once the API script loads.
+  // "interaction-only" keeps it invisible unless a challenge is required.
+  const turnstileWidgets = new Map<HTMLFormElement, string>();
+  if (TS_KEY) {
+    const s = document.createElement('script');
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+    s.async = true;
+    s.addEventListener('load', () => {
+      document.querySelectorAll<HTMLFormElement>('[data-signup-form]').forEach((form) => {
+        const slot = form.querySelector('[data-turnstile-slot]');
+        if (slot && window.turnstile) {
+          turnstileWidgets.set(
+            form,
+            window.turnstile.render(slot, { sitekey: TS_KEY, appearance: 'interaction-only' })
+          );
+        }
+      });
+    });
+    document.head.appendChild(s);
+  }
 
   // Capture UTM params on first landing and keep them for the whole visit,
   // so attribution survives even if the visitor navigates around first.
@@ -312,6 +358,10 @@ const { variant, source } = Astro.props;
       label.hidden = true;
       busy.hidden = false;
 
+      const widgetId = turnstileWidgets.get(form);
+      const turnstileToken =
+        widgetId !== undefined ? window.turnstile?.getResponse(widgetId) : undefined;
+
       try {
         const res = await fetch('/api/subscribe', {
           method: 'POST',
@@ -320,16 +370,21 @@ const { variant, source } = Astro.props;
             email,
             source: (form.elements.namedItem('source') as HTMLInputElement).value,
             website: (form.elements.namedItem('website') as HTMLInputElement).value,
+            turnstileToken,
             ...attribution,
           }),
         });
         const data = (await res.json()) as { ok?: boolean; error?: string };
         if (res.ok && data.ok) {
           markAllSubscribed();
+          // The thank-you page fires the ad conversion events and walks
+          // the visitor through confirming their email.
+          window.location.assign('/blagodarya');
         } else {
           errEl.textContent =
             data.error || 'Нещо се обърка. Опитай отново или ни пиши на имейла.';
           errEl.hidden = false;
+          if (widgetId !== undefined) window.turnstile?.reset(widgetId);
         }
       } catch {
         errEl.textContent = 'Няма връзка със сървъра. Провери интернета си и опитай пак.';

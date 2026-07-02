@@ -1,7 +1,9 @@
 ---
 import LogoMark from './LogoMark.astro';
+import { siteConfig } from '../config';
 
 const year = new Date().getFullYear();
+const hasTracking = Boolean(siteConfig.fbPixelId || siteConfig.googleTagId);
 ---
 
 <footer class="site-footer">
@@ -33,6 +35,13 @@ const year = new Date().getFullYear();
           <a href="/usloviya">Общи условия</a>
           <a href="/poveritelnost">Поверителност</a>
           <a href="/biskvitki">Бисквитки</a>
+          {
+            hasTracking && (
+              <button type="button" class="consent-settings" data-consent-settings>
+                Настройки за бисквитки
+              </button>
+            )
+          }
           <a href="mailto:radoslav.dodnikov@gmail.com">radoslav.dodnikov@gmail.com</a>
         </div>
       </div>
@@ -46,6 +55,12 @@ const year = new Date().getFullYear();
     </div>
   </div>
 </footer>
+
+<script>
+  document.querySelector('[data-consent-settings]')?.addEventListener('click', () => {
+    document.dispatchEvent(new CustomEvent('vc:consent-open'));
+  });
+</script>
 
 <style>
   .site-footer {
@@ -107,6 +122,21 @@ const year = new Date().getFullYear();
   }
 
   .links a:hover {
+    color: #fff;
+  }
+
+  .consent-settings {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: inherit;
+    text-align: left;
+    color: #8f897c;
+    font-size: 14.5px;
+  }
+
+  .consent-settings:hover {
     color: #fff;
   }
 

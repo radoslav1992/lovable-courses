@@ -12,6 +12,11 @@ interface Env {
    * Must be on a domain onboarded in Email Sending. Empty = email skipped.
    */
   EMAIL_FROM?: string;
+  /**
+   * Turnstile secret key (wrangler secret) — bot verification is skipped
+   * when absent. Pair with turnstileSiteKey in src/config.ts.
+   */
+  TURNSTILE_SECRET_KEY?: string;
 }
 
 declare namespace App {
