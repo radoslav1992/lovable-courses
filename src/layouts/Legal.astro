@@ -1,0 +1,168 @@
+---
+import Base from './Base.astro';
+import LogoMark from '../components/LogoMark.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  /** Set to null to hide the "last updated" line (non-legal pages). */
+  updated?: string | null;
+  kicker?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description,
+  path,
+  updated = '1 юли 2026 г.',
+  kicker = 'Правно',
+  noindex = false,
+} = Astro.props;
+---
+
+<Base
+  title={`${title} — Vibe Coding с Lovable`}
+  description={description}
+  path={path}
+  noindex={noindex}
+>
+  <div class="page">
+    <header>
+      <div class="inner">
+        <a href="/" class="brand">
+          <LogoMark size={34} radius={10} />
+          <span class="brand-name">Vibe Coding с Lovable</span>
+        </a>
+        <a href="/" class="back">← Обратно към сайта</a>
+      </div>
+    </header>
+
+    <main>
+      <div class="kicker">{kicker}</div>
+      <h1>{title}</h1>
+      {updated && <p class="updated">Последна актуализация: {updated}</p>}
+      <div class="content">
+        <slot />
+      </div>
+    </main>
+  </div>
+</Base>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--paper);
+  }
+
+  header {
+    background: var(--ink);
+  }
+
+  .inner {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .brand-name {
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+  }
+
+  .back {
+    color: var(--muted-dark);
+    text-decoration: none;
+    font-size: 14.5px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .back:hover {
+    color: #fff;
+  }
+
+  main {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: clamp(40px, 6vw, 72px) 24px 96px;
+  }
+
+  .kicker {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+
+  h1 {
+    font-size: clamp(32px, 5vw, 48px);
+    letter-spacing: -0.03em;
+    font-weight: 800;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+
+  .updated {
+    color: #9a9488;
+    font-size: 14.5px;
+    margin: 0 0 40px;
+  }
+
+  .content {
+    font-size: 16.5px;
+    line-height: 1.7;
+    color: #3a362e;
+  }
+
+  .content :global(h2) {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 36px 0 10px;
+    color: var(--ink);
+  }
+
+  .content :global(a) {
+    color: var(--blue);
+  }
+
+  .content :global(ul) {
+    padding-left: 20px;
+    margin: 0;
+  }
+
+  .content :global(li) {
+    margin-bottom: 10px;
+  }
+
+  .content :global(.legal-links) {
+    margin-top: 44px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(23, 21, 15, 0.1);
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+  }
+
+  .content :global(.legal-links a) {
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+  }
+</style>

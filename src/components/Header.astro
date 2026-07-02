@@ -1,0 +1,108 @@
+---
+import LogoMark from './LogoMark.astro';
+---
+
+<header class="site-header">
+  <div class="inner">
+    <a href="/#top" class="brand">
+      <LogoMark size={38} radius={12} />
+      <span class="brand-name">Vibe Coding<span class="brand-accent"> · Lovable</span></span>
+    </a>
+    <nav aria-label="Основна навигация">
+      <a href="/#kurs" class="nav-link">Курсът</a>
+      <a href="/#lektor" class="nav-link">Лектор</a>
+      <a href="/#otzivi" class="nav-link">Отзиви</a>
+      <a href="/#skoro" class="nav-link">Скоро</a>
+      <a href="/#faq" class="nav-link">Въпроси</a>
+      <a href="/#zapis" class="nav-cta">Запиши се</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(23, 21, 15, 0.82);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .inner {
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    text-decoration: none;
+  }
+
+  .brand-name {
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: -0.02em;
+    white-space: nowrap;
+  }
+
+  .brand-accent {
+    color: var(--pink-soft);
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+  }
+
+  .nav-link {
+    color: #d8d4c8;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+
+  .nav-link:hover {
+    color: #fff;
+  }
+
+  .nav-cta {
+    text-decoration: none;
+    background: var(--paper);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 15px;
+    padding: 10px 18px;
+    border-radius: 11px;
+    transition: transform 0.15s, background 0.15s;
+    white-space: nowrap;
+  }
+
+  .nav-cta:hover {
+    background: #fff;
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 760px) {
+    .nav-link {
+      display: none;
+    }
+    nav {
+      gap: 12px;
+    }
+    .brand-name {
+      font-size: 16px;
+    }
+  }
+</style>

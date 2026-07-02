@@ -1,0 +1,24 @@
+{
+  "name": "vibe-coding-lovable",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "wrangler dev",
+    "deploy": "astro build && wrangler deploy",
+    "db:create": "wrangler d1 create vibe-coding-signups",
+    "db:migrate": "wrangler d1 migrations apply vibe-coding-signups --remote",
+    "db:migrate:local": "wrangler d1 migrations apply vibe-coding-signups --local",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^12.6.0",
+    "astro": "^5.12.0"
+  },
+  "devDependencies": {
+    "sharp": "^0.35.3",
+    "wrangler": "^4.24.0"
+  }
+}
