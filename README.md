@@ -40,11 +40,13 @@ npm run preview            # wrangler dev against ./dist
    npm run db:migrate
    ```
 
-3. **Deploy:**
+3. **Deploy:** the repo is connected to [Cloudflare Workers Builds](https://developers.cloudflare.com/workers/ci-cd/builds/), which builds and deploys every push to `main` automatically. Manual deploys also work:
 
    ```sh
    npm run deploy
    ```
+
+   > `public/.assetsignore` (containing `_worker.js`) is required — it stops wrangler from uploading the compiled server bundle inside `dist/` as a public static asset.
 
 4. Set the production domain in `astro.config.mjs` (`site`) so canonical/OG URLs are correct, then redeploy.
 
@@ -66,7 +68,7 @@ npm run preview            # wrangler dev against ./dist
 
    The widget is invisible unless a challenge is needed; the API verifies tokens server-side. Both sides are skipped while unconfigured.
 
-9. **CI/CD**: `.github/workflows/deploy.yml` builds every PR and deploys `main` on merge. Add `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as repository secrets to enable the deploy job.
+9. **CI/CD**: Cloudflare Workers Builds deploys `main`; `.github/workflows/deploy.yml` runs a build check on every PR so broken builds are caught before merge.
 
 ## Placeholders to replace before launch
 
@@ -74,7 +76,6 @@ npm run preview            # wrangler dev against ./dist
 - `src/pages/bonus.astro` — placeholder prompts for the lead magnet «10 готови промпта за Lovable»; replace with your real prompts. The page is `noindex` and only reachable via the welcome email link.
 - `src/config.ts` — analytics token, FB Pixel / Google tag IDs, Turnstile site key, next session date, lead magnet title.
 - `wrangler.jsonc` — D1 `database_id`, `EMAIL_FROM` (address on an Email Sending onboarded domain).
-- GitHub repo secrets — `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID` for auto-deploy.
 
 ## Reading collected emails
 
