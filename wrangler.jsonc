@@ -39,7 +39,7 @@
     {
       "binding": "DB",
       "database_name": "vibe-coding-signups",
-      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID",
+      "database_id": "9f503559-cd49-4977-8918-6df9a0c35c9d",
       "migrations_dir": "migrations"
     }
   ]
