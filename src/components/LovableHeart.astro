@@ -1,28 +1,22 @@
 ---
 /**
- * The Lovable heart mark, recreated from the official logo silhouette.
- * `id` must be unique per instance (SVG gradient ids are document-global).
+ * The official Lovable heart mark (from the brand asset the mark was
+ * exported at 1883×1920; served as a 126×128 webp — the badges show it
+ * at 22–26px).
  */
 interface Props {
   size: number;
-  id: string;
 }
-const { size, id } = Astro.props;
+const { size } = Astro.props;
+const width = Math.round((size * 126) / 128);
 ---
 
-<svg viewBox="0 0 100 101" width={size} height={size} aria-hidden="true">
-  <defs>
-    <linearGradient id={id} x1="0.35" y1="0" x2="0.50" y2="1">
-      <stop offset="0" stop-color="#FF6A00"></stop>
-      <stop offset="0.30" stop-color="#FF3D00"></stop>
-      <stop offset="0.50" stop-color="#FF0A3C"></stop>
-      <stop offset="0.64" stop-color="#FF2E9E"></stop>
-      <stop offset="0.82" stop-color="#9B5CF6"></stop>
-      <stop offset="1" stop-color="#3E7BFA"></stop>
-    </linearGradient>
-  </defs>
-  <path
-    fill={`url(#${id})`}
-    d="M29.6 0A29.6 29.6 0 0 1 59.2 29.6L59.2 41.4L79.4 41.4A20.2 20.2 0 0 1 92.4 77.1C84 84 62 101 40 101C16 101 0 88 0 62L0 29.6A29.6 29.6 0 0 1 29.6 0Z"
-  ></path>
-</svg>
+<img
+  src="/assets/lovable-heart.webp"
+  width={width}
+  height={size}
+  alt=""
+  aria-hidden="true"
+  loading="lazy"
+  decoding="async"
+/>
