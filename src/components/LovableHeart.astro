@@ -1,0 +1,27 @@
+---
+/**
+ * The Lovable heart mark, recreated from the official logo silhouette.
+ * `id` must be unique per instance (SVG gradient ids are document-global).
+ */
+interface Props {
+  size: number;
+  id: string;
+}
+const { size, id } = Astro.props;
+---
+
+<svg viewBox="0 0 100 101" width={size} height={size} aria-hidden="true">
+  <defs>
+    <linearGradient id={id} x1="0.30" y1="0" x2="0.55" y2="1">
+      <stop offset="0" stop-color="#FF5C00"></stop>
+      <stop offset="0.32" stop-color="#FF1B4C"></stop>
+      <stop offset="0.55" stop-color="#FF2C9C"></stop>
+      <stop offset="0.78" stop-color="#A55CF7"></stop>
+      <stop offset="1" stop-color="#3E7BFA"></stop>
+    </linearGradient>
+  </defs>
+  <path
+    fill={`url(#${id})`}
+    d="M29.6 0A29.6 29.6 0 0 1 59.2 29.6L59.2 41.4L79.4 41.4A20.2 20.2 0 0 1 92.4 77.1C84 84 62 101 40 101C16 101 0 88 0 62L0 29.6A29.6 29.6 0 0 1 29.6 0Z"
+  ></path>
+</svg>
